@@ -14,12 +14,15 @@ L’expérience se compose de trois modules immersifs, reliés par un système d
 Parcours narratif
 
 La naissance
+
 Le saumon apparaît à l’écran et progresse lorsque le visiteur s’avance. Le décor évolue en fonction des conditions météorologiques réelles du Léguer, ancrant l’expérience dans le réel.
 
 La traversée
-Le saumon traverse une série de tableaux symbolisant les étapes qu’il affronte en mer : pollution, réchauffement de l’eau, résidus médicamenteux, raréfaction de son alimentation. Certains éléments visuels évoluent selon des données réelles.
+
+Le saumon traverse une série de tableaux symbolisant les étapes qu’il affronte en mer : pollution, réchauffement de l’eau, résidus médicamenteux, raréfaction de son alimentation.
 
 Le retour
+
 Le saumon atteint son lieu de reproduction, le Léguer. À la fin du parcours, un nouvel œuf apparaît et s’illumine. Plus il y a de visiteurs, plus le nombre d’œufs augmente, symbolisant la force de la prise de conscience collective.
 
 Réalisé en partie avec CableGL : 
