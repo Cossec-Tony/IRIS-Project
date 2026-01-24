@@ -19,19 +19,11 @@ const video3 = document.getElementById("video3");
 const playOverlay2 = document.getElementById("playOverlay2");
 const playOverlay3 = document.getElementById("playOverlay3");
 
-// Debug - verifier que les elements existent
-console.log("[v0] video2:", video2);
-console.log("[v0] video3:", video3);
-console.log("[v0] playOverlay2:", playOverlay2);
-console.log("[v0] playOverlay3:", playOverlay3);
-
 // Charger la premiere frame des videos au demarrage
 video2.addEventListener("loadeddata", () => {
-  console.log("[v0] video2 loaded, duration:", video2.duration);
   video2.currentTime = 0.01;
 });
 video3.addEventListener("loadeddata", () => {
-  console.log("[v0] video3 loaded, duration:", video3.duration);
   video3.currentTime = 0.01;
 });
 
@@ -42,17 +34,66 @@ video3.load();
 const clickSound = new Audio();
 clickSound.src = "water-fountain-healing-music-239455.mp3.mkv.mp3";
 
+// Fonction pour charger et initialiser CABLES (patch.js)
+function loadCablesPatch() {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "js/patch.js";
+    script.async = true;
+    script.onload = () => {
+      console.log("[v0] patch.js script loaded");
+
+      if (!window.CABLES || !window.CABLES.exportedPatch) {
+        console.error("CABLES ou exportedPatch non trouvé !");
+        return;
+      }
+
+      CABLES.patch = new CABLES.Patch({
+        patch: CABLES.exportedPatch,
+        prefixAssetPath: "",
+        assetPath: "assets/",
+        jsPath: "js/",
+        glCanvasId: "glcanvas",
+        glCanvasResizeToWindow: true,
+        onError: function(initiator, ...args) {
+          console.error("[CABLES Error]", initiator, ...args);
+        },
+        canvas: { alpha: true, premultipliedAlpha: true }
+      });
+      console.log("[v0] CABLES.patch created");
+
+      document.getElementById("glcanvas").addEventListener("touchmove", (e) => {
+        e.preventDefault();
+      }, false);
+
+      resolve();
+    };
+    script.onerror = (e) => {
+      console.error("[v0] patch.js failed to load", e);
+    };
+    document.body.appendChild(script);
+    console.log("[v0] patch.js script added to DOM");
+  });
+}
+
 // START BUTTON
 startBtn.addEventListener("click", () => {
+  console.log("[v0] Start button clicked");
   clickSound.play();
   fade.classList.add("active");
 
-  setTimeout(() => {
-    home.style.display = "none";
-    fade.classList.remove("active");
-    music.play();
-    phase1.classList.add("active");
-  }, 1500);
+  // Charger CABLES seulement au click
+  loadCablesPatch().then(() => {
+    console.log("[v0] loadCablesPatch promise fulfilled, waiting 1500ms...");
+    setTimeout(() => {
+      console.log("[v0] Activating phase 1");
+      home.style.display = "none";
+      fade.classList.remove("active");
+      music.play();
+      phase1.classList.add("active");
+      console.log("[v0] Phase 1 activated");
+    }, 1500);
+  });
 });
 
 // EDGE DETECTION
@@ -116,6 +157,8 @@ function goToNextPhase() {
   console.log("PHASE ACTUELLE :", phase);
 
   if (phase === 2) {
+    stopPhase1Completely();  // <== stoppe tout ce qui tourne en phase 1
+
     enterPhase2();
   }
 
@@ -123,6 +166,7 @@ function goToNextPhase() {
     enterPhase3();
   }
 }
+
 
 function enterPhase2() {
   console.log("Entree dans la phase 2");
@@ -202,3 +246,35 @@ openStory.addEventListener("click", (e) => {
 closeStory.addEventListener("click", () => {
   story.classList.remove("active");
 });
+
+
+function stopPhase1Completely() {
+  // 1. Supprimer le canvas (ou juste le cacher)
+  const canvas = document.getElementById("glcanvas");
+  if (canvas) {
+    canvas.remove();  // supprime le canvas du DOM
+    console.log("[v0] Canvas phase1 removed from DOM");
+  }
+
+  // 2. Supprimer la référence au patch
+  if (CABLES.patch) {
+    if (typeof CABLES.patch.destroy === "function") {
+      CABLES.patch.destroy();
+      console.log("[v0] CABLES.patch.destroy() called");
+    }
+    CABLES.patch = null;
+  }
+
+  // 3. Supprimer le script patch.js
+  const patchScript = document.querySelector('script[src="js/patch.js"]');
+  if (patchScript) {
+    patchScript.remove();
+    console.log("[v0] patch.js script removed from DOM");
+  }
+
+  // 4. Cacher phase1 (au cas où)
+  const phase1Div = document.getElementById("phase1");
+  if (phase1Div) {
+    phase1Div.classList.remove("active");
+  }
+}
