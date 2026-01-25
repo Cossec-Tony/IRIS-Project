@@ -165,6 +165,7 @@ body {
 .thanks-screen {
   position: fixed;
   inset: 0;
+  padding: 100px;
   background: black;
   display: flex;
   flex-direction: column;
@@ -178,12 +179,12 @@ body {
 
 .thanks-screen h1 {
   font-family: "Aesthetic", serif;
-  font-size: 48px;
+  font-size: 28px;
   margin-bottom: 32px;
 }
 
 .thanks-screen p {
-  font-size: 14px;
+  font-size: 20px;
   letter-spacing: 2px;
   opacity: 0.8;
 }
@@ -351,4 +352,47 @@ canvas {
 .play-btn:hover {
   background: white;
   color: black;
+}
+
+
+
+
+#phase3 {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+#phase3 video {
+  z-index: 1;
+}
+
+#eggLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none; /* IMPORTANT */
+}
+
+.play-overlay {
+  z-index: 3;
+}
+
+.egg {
+  position: absolute;
+  width: 15px;
+}
+
+.phase-message {
+  position: fixed;
+  bottom: 15px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  pointer-events: none; /* pour ne pas gêner les clics */
+  user-select: none;
+  z-index: 1000;
+  text-shadow: 0 0 5px rgba(0,0,0,0.7);
 }
