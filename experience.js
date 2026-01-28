@@ -16,8 +16,9 @@ const phase2 = document.getElementById("phase2");
 const phase3 = document.getElementById("phase3");
 const video2 = document.getElementById("video2");
 const video3 = document.getElementById("video3");
-const playOverlay2 = document.getElementById("playOverlay2");
-const playOverlay3 = document.getElementById("playOverlay3");
+
+const playAnimationBtn = document.getElementById("playAnimationBtn");
+
 
 let phase2VideoFinished = false;
 let phase3VideoFinished = false;
@@ -181,75 +182,63 @@ function goToNextPhase() {
 
 
 function enterPhase2() {
-  console.log("Entree dans la phase 2");
-
   fade.classList.add("active");
 
   video2.currentTime = 0;
-  video2.play();
-
-  video2.onended = () => {
-    console.log("[PHASE 2] video finished");
-    phase2VideoFinished = true;
-  };
-
+  video2.pause();
 
   setTimeout(() => {
     phase1.classList.remove("active");
     phase2.classList.add("active");
     fade.classList.remove("active");
 
-    // Afficher l'overlay et attendre le click
-    playOverlay2.classList.remove("hidden");
+    playAnimationBtn.classList.remove("hidden");
 
-    playOverlay2.addEventListener("click", () => {
-      playOverlay2.classList.add("hidden");
-      video2.play();
-    }, { once: true });
-  }, 1500);
+  playAnimationBtn.onclick = () => {
+    playAnimationBtn.classList.add("hidden");
+    video2.play();
+  };
+}, 1500);
+
+  video2.onended = () => {
+    phase2VideoFinished = true;
+    playAnimationBtn.classList.remove("hidden");
+  };
 }
 
-function enterPhase3() {
-  console.log("Entree dans la phase 3");
 
+function enterPhase3() {
   eggSystemActive = true;
   restoreEggs();
   updateEggs();
 
-  playOverlay3.addEventListener("click", () => {
-  playOverlay3.classList.add("hidden");
-  video3.play();
-
-    eggSpawned = false;          // reset sécurité
-    watchEggSpawnDuringVideo(); // 🥚 démarre ICI
-  }, { once: true });
-
   fade.classList.add("active");
 
   video3.currentTime = 0;
-  video3.play();
-
-  video3.onended = () => {
-    console.log("[PHASE 3] video finished");
-    phase3VideoFinished = true;
-  };
-
+  video3.pause();
 
   setTimeout(() => {
     phase2.classList.remove("active");
     phase3.classList.add("active");
     fade.classList.remove("active");
 
-    // Afficher l'overlay et attendre le click
-    playOverlay3.classList.remove("hidden");
+    playAnimationBtn.classList.remove("hidden");
 
-    playOverlay3.addEventListener("click", () => {
-      playOverlay3.classList.add("hidden");
-      video3.play();
-    }, { once: true });
+  playAnimationBtn.onclick = () => {
+    playAnimationBtn.classList.add("hidden");
+    video3.play();
+    eggSpawned = false;
+    watchEggSpawnDuringVideo();
+  };
 
   }, 1500);
+
+  video3.onended = () => {
+    phase3VideoFinished = true;
+    playAnimationBtn.classList.remove("hidden");
+  };
 }
+
 
 function updateLoaderPosition(e) {
   loader.style.right = "20px";
@@ -257,8 +246,10 @@ function updateLoaderPosition(e) {
 }
 
 function showThanks() {
+  playAnimationBtn.classList.add("hidden");
   eggSystemActive = false;
   fade.classList.add("active");
+
   setTimeout(() => {
     phase3.classList.remove("active");
     thanks.classList.add("active");
